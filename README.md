@@ -1,7 +1,8 @@
 # ScopeControl
 by Thorsten Schumacher  - PrintedLabs
 
-a slim uvc-camera viewer including basic camera control function, 
+a slim uvc-camera viewer including basic camera control functions, 
 some live-view filter function and tools for microscopic and astronomic 
-measurements including the software interface to our 3D-print microscope, 
-telescope and mount.
+measurements, frame averaging and a simple timelapse tool. Furthermore it 
+includes the software interface to our DIY 3D-printed microscope, telescope 
+and telescope-mount.
