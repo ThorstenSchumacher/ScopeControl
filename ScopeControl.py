@@ -1,6 +1,6 @@
 ####################################################################################################################################################
 # ScopeControl
-# by Thorsten Schumacher - PrinterLabs
+# by Thorsten Schumacher - PrintedLabs
 #
 # Licence: 
 #
