@@ -118,7 +118,8 @@ class camwin(QMainWindow):
         self.camindexfound = ["0"] #we start with one source
         self.ui.comboBox_camport.addItems(self.camindexfound)
         self.frameid = 0    # the frame number we got after connecting to the cam
-        self.resolutiondesired = self.resolution = [2*1920, 2*1080] # this is the desired resolution we are working with ... self.resolution will be overwritten when cam is connected and readout
+        self.resolutiondesired = [2*1920, 2*1080] # this is the desired resolution we are working with ... 
+        self.resolution = [2*1920, 2*1080] # self.resolution will be overwritten when cam is connected and readout
         self.averagenum = 20 # over how many frames we want to average
         self.vidtime0 = 0 # this is the time when we will start recording
         self.vidtime1 = 0 # this is the time when the last frme was written
@@ -591,7 +592,6 @@ class camwin(QMainWindow):
             # now set camera parameters
             self.ui.pushButton_comconnect.setText("disconnect")
             if self.mycam.isOpened():
-                
                 self.mycam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
                 self.mycam.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolutiondesired[0])
                 self.mycam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolutiondesired[1])
