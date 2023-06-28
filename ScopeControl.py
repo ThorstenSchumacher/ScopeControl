@@ -831,7 +831,7 @@ class camwin(QMainWindow):
                     dx = np.abs(self.cursorx0 - self.cursorx1)
                     dy = np.abs(self.cursory0 - self.cursory1)
                     dalpharad = np.arctan(float(self.ui.lineEdit_pxlen.text())/1000 * np.sqrt(dx**2 + dy**2) / self.telfocal[self.telID])
-                    arcsec = dalpharad/(2*np.pi)*360 * 3600  # first in deg then times 60x60 for bogsec
+                    arcsec = dalpharad/(2*np.pi)*360 * 3600  # first in deg then times 60x60 for arcsec
                     m = np.floor(arcsec/60)
                     s = arcsec % 60
                     distlabel = "size: " + "{:.0f}".format(m) +"\"" "{:.1f}".format(s) + "'"
