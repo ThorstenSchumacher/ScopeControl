@@ -100,6 +100,7 @@ class camwin(QMainWindow):
         # define flags
         self.runcam = False # initialy the cam is not running
         self.videomin = False # we will not start in minimized video window
+        self.fullscreenmode = True # if true, there is no window frame but the whole sceen will be the live-view, if false we have the live-view windowed
         self.recreatewin = True # we start the window for the first time
         self.freeze = False # if true we will skip grabbing a ned frame
         self.vidrec = False # flag if we are recording a video
@@ -185,7 +186,7 @@ class camwin(QMainWindow):
         self.ui.pushButton_settings.clicked.connect(self.opensettings)
         self.ui.pushButton_exit.clicked.connect(self.closeSW)
         self.ui.pushButton_mini.clicked.connect(self.minimize)
-        self.ui.pushButton_help.clicked.connect(self.helplink)
+        self.ui.pushButton_screenmode.clicked.connect(self.fullscreentoggle)
         self.ui.pushButton_micmode.clicked.connect(self.gotomicmode)
         self.ui.pushButton_telmode.clicked.connect(self.gototelmode)
         self.ui.pushButton_infobox.clicked.connect(self.gotoinfomode)
@@ -245,8 +246,10 @@ class camwin(QMainWindow):
         self.oldPos = globalPos
 
     ###################################### general functions ##################################################
-    def helplink(self):
-        browseropen('https://www.ep3.uni-bayreuth.de/de/index.html')
+    def fullscreentoggle(self):
+        self.fullscreenmode = not(self.fullscreenmode) # we toggle the current fullscreenmode
+        self.recreatewin = True # and recreate the window
+
 
     def writesettings(self):
         configarray = [self.ui.comboBox_camport.currentIndex(), self.ui.comboBox_lampport.currentIndex(), self.ui.comboBox_micobject.currentIndex(), self.ui.lineEdit_pxlen.text(), self.ui.lineEdit_frameavnum.text(), self.ui.comboBox_mountport.currentIndex(), self.ui.comboBox_telescopes.currentIndex()]  # create list with all information to save
@@ -642,16 +645,20 @@ class camwin(QMainWindow):
 
     
     def camreadupdate(self):
-        self.frameid = 0    # after connecting to cam we start with frame nr 0    
-        self.LVwindow_name = "camera view"       
+        self.frameid = 0    # after connecting to cam we start with frame nr 0  
+
 
         # now we start reading
         while self.runcam == True:
             if self.recreatewin == True:    # we have to define our window since the camera starts for the first time or we come back from minimized window
                 # we prepare the window for full frame image ... to adjust
-                cv2.namedWindow(self.LVwindow_name, cv2.WINDOW_NORMAL)
-                cv2.moveWindow(self.LVwindow_name, self.resolution[0] - 1, self.resolution[1] - 1)
-                cv2.setWindowProperty(self.LVwindow_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                cv2.namedWindow('live-view', cv2.WINDOW_NORMAL)
+                cv2.moveWindow('live-view', self.resolution[0] - 1, self.resolution[1] - 1)
+                cv2.resizeWindow('live-view', self.resolution[0], self.resolution[1])
+                cv2.moveWindow('live-view', 0, 0)
+                if self.fullscreenmode == True:   # if we have fullscreenmode activated, we will have the whole screen as live-view
+                    cv2.setWindowProperty('live-view', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
                 self.recreatewin = False   # after creation we no longer need to do that
 
                 # we get one single frame when creating the window ... afterwards it can directly pause
@@ -858,12 +865,12 @@ class camwin(QMainWindow):
                         self.vidtime1 = time.time() # time when we took the last frame
                 else: # standard video without timelapse
                     self.videoout.write(frame) # we add every image to movie
-            
+
             # window preparation check 
             if self.videomin == False and self.recreatewin == False:   # we only show the image if the window is prepared and the window is not minimized
-                cv2.imshow(self.LVwindow_name, frame) # we update the plot    
-                cv2.setMouseCallback(self.LVwindow_name, self.mousemove_event)
-
+                cv2.imshow('live-view', frame) # we update the plot    
+                cv2.setMouseCallback('live-view', self.mousemove_event)
+    
             else:
                 cv2.destroyAllWindows()
             
@@ -876,7 +883,7 @@ class camwin(QMainWindow):
         
         # camera update loop finisehd so we have to reset the startup parameters and close the window
         self.recreatewin = True 
-        cv2.destroyWindow(self.LVwindow_name)   # finally we close the window 
+        cv2.destroyWindow('live-view')   # finally we close the window 
 
     def togglefreeeze(self):
         if self.runcam == True:
@@ -957,27 +964,24 @@ class camwin(QMainWindow):
                 self.measureID = 3
                 self.ui.pushButton_measure.setEnabled(True)
             elif self.measureID == 3:
-                self.measure() # we do the same as if we would press the clear/measurement button
+                self.cursorx0 = x
+                self.cursory0 = y
+                self.measureID = 2 # we start a new measurment at current position and wait for end-point
+                #self.measure() # we do the same as if we would press the clear/measurement button
         
 
     def measure(self):
         if self.runcam == True: # only if we have a running camera
             
-            if self.measureID == 1 or self.measureID == 2: # if we are in a measurement when the button is clicked, then reset everything
+            if self.measureID == 1 or self.measureID == 2 or self.measureID == 3: # if we are in a measurement when the button is clicked, then close measurement
                 self.measureID = 0 # this will reset the measurement (see following if condition otherwise we would ne to have elif)
                 self.ui.pushButton_measure.setStyleSheet(u""+ self.buttonstyle("measure.png", "measureb.png", 0)) # set to unactivated mode
-            
-            if self.measureID == 0: # now we start a measurement
-                self.measureID = 1
+            elif self.measureID == 0: # else we start the measurement mode
+                self.measureID = 1 # and begin with point one
                 self.ui.pushButton_measure.setStyleSheet(u""+ self.buttonstyle("measure.png", "measureb.png", 1)) # set to activated mode
-                #self.ui.pushButton_measure.setDisabled(True)
                 self.statusmessage("set first point")
-                       
-            if self.measureID == 3: # we reset the measurement 
-                self.measureID = 0
-                self.ui.pushButton_measure.setStyleSheet(u""+ self.buttonstyle("measure.png", "measureb.png", 0)) # set to unactivated mode
-                
-        else:
+                                 
+        else: # if camera is not running send status
             self.statusmessage('no camera connected')
 
 

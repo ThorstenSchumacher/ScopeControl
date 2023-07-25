@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'camcom_gui2.ui'
+## Form generated from reading UI file 'camcom_gui.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.3.0
 ##
@@ -100,14 +100,14 @@ class Ui_camcom_mainwin(object):
         self.label_4.setStyleSheet(u"background-color: transparent;\n"
 "border-color: transparent;")
         self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-        self.pushButton_help = QPushButton(self.frame)
-        self.pushButton_help.setObjectName(u"pushButton_help")
-        self.pushButton_help.setGeometry(QRect(360, 10, 20, 20))
-        self.pushButton_help.setStyleSheet(u"QPushButton {\n"
+        self.pushButton_screenmode = QPushButton(self.frame)
+        self.pushButton_screenmode.setObjectName(u"pushButton_screenmode")
+        self.pushButton_screenmode.setGeometry(QRect(385, 10, 20, 20))
+        self.pushButton_screenmode.setStyleSheet(u"QPushButton {\n"
 "	border: none;\n"
 "	border-radius: 0px;\n"
 "	background-color: rgb(100,100,100);\n"
-"	background-image: url(:/icons/help.png);\n"
+"	background-image: url(:/icons/screenmode.png);\n"
 "	color: white;\n"
 "	font: 10pt \"MS Shell Dlg 2\";\n"
 "}\n"
@@ -456,7 +456,7 @@ class Ui_camcom_mainwin(object):
         self.label_status.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.pushButton_mini = QPushButton(self.frame)
         self.pushButton_mini.setObjectName(u"pushButton_mini")
-        self.pushButton_mini.setGeometry(QRect(385, 10, 20, 20))
+        self.pushButton_mini.setGeometry(QRect(360, 10, 20, 20))
         font = QFont()
         font.setFamilies([u"MS Shell Dlg 2"])
         font.setPointSize(10)
@@ -848,7 +848,7 @@ class Ui_camcom_mainwin(object):
         self.page_5.setObjectName(u"page_5")
         self.label_36 = QLabel(self.page_5)
         self.label_36.setObjectName(u"label_36")
-        self.label_36.setGeometry(QRect(10, 10, 421, 151))
+        self.label_36.setGeometry(QRect(10, -10, 421, 181))
         self.label_36.setStyleSheet(u"border-radius: 2px;\n"
 "background-color: rgba(255, 0, 100, 0);\n"
 "border-color: rgba(5, 5, 5, 0);\n"
@@ -1444,7 +1444,7 @@ class Ui_camcom_mainwin(object):
 
         self.retranslateUi(camcom_mainwin)
 
-        self.stackedWidget_scopetype.setCurrentIndex(1)
+        self.stackedWidget_scopetype.setCurrentIndex(2)
         self.stackedWidget_settings.setCurrentIndex(0)
 
 
@@ -1457,7 +1457,7 @@ class Ui_camcom_mainwin(object):
         self.pushButton_comrefresh.setText(QCoreApplication.translate("camcom_mainwin", u"refresh", None))
         self.pushButton_comconnect.setText(QCoreApplication.translate("camcom_mainwin", u"connect", None))
         self.label_4.setText(QCoreApplication.translate("camcom_mainwin", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600; font-style:italic; color:#6496c8;\">camera</span></p></body></html>", None))
-        self.pushButton_help.setText("")
+        self.pushButton_screenmode.setText("")
 #if QT_CONFIG(tooltip)
         self.pushButton_settings.setToolTip("")
 #endif // QT_CONFIG(tooltip)
@@ -1499,7 +1499,7 @@ class Ui_camcom_mainwin(object):
         self.checkBox_tracking.setText(QCoreApplication.translate("camcom_mainwin", u"activate tracking (counter rotation of earth)", None))
         self.label_37.setText(QCoreApplication.translate("camcom_mainwin", u"<html><head/><body><p><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">Mount speed</span></p></body></html>", None))
         self.label_mountspeed.setText(QCoreApplication.translate("camcom_mainwin", u"0", None))
-        self.label_36.setText(QCoreApplication.translate("camcom_mainwin", u"<html><head/><body><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#ffffff;\">ScopeControl - PrintedLabs</span></p><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">Version: 1.1 - 05/16/2023</span></p><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">On our </span><a href=\"www.ep3.uni-bayreuth.de\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline; color:#dc0000;\">website</span></a><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">, you will find instructions for using the software, <br/>models for 3D-printed microscopes and telescopes, as well as <br/>some suggestions for experimentation.</span></p><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">Dr. Thorsten Schumacher</span></p></body></html>", None))
+        self.label_36.setText(QCoreApplication.translate("camcom_mainwin", u"<html><head/><body><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#ffffff;\">ScopeControl - PrintedLabs</span></p><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">Version: 1.2 - 07/25/2023</span></p><p align=\"justify\"><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">Would you like to learn more about ScopeControl and get<br/>a tutorial on all implemented functions. You can find this and<br/>much more on our website </span><a href=\"www.printedlabs.uni-bayreuth.de\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline; color:#dc0000;\">www.printedlabs.uni-bayreuth.de</span></a><span style=\" font-size:10pt; font-weight:600; color:#dcdcdc;\">!</span></p></body></html>", None))
         self.pushButton_micmode.setText(QCoreApplication.translate("camcom_mainwin", u"Microscope", None))
         self.pushButton_telmode.setText(QCoreApplication.translate("camcom_mainwin", u"Telescope", None))
         self.pushButton_infobox.setText("")
