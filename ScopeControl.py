@@ -5,8 +5,8 @@
 # Licence: Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA) 
 # also see: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
 #
-# A slim uvc-camera viewer including basic camera control functions, some live-view filter function and tools for microscopic and astronomic measurements, 
-# frame averaging and a simple timelapse tool. Furthermore it includes the software interface to our DIY 3D-printed microscope, telescope and telescope-mount.
+# A slim uvc camera viewer with basic camera control functions, some live view filter functions and tools for microscopic and astronomical measurements, 
+# image averaging and a simple timelapse tool. It also includes the software interface to our 3D-printed microscope, telescope and telescope mount.
 ###################################################################################################################################################
 
 
@@ -19,11 +19,11 @@ import time # general lib
 import nest_asyncio # get rid of async warnings (event loop issue)
 import csv  # read config data and micobjective List
 import serial, serial.tools.list_ports  # communicate with microscope (lamp)
-from webbrowser import open as browseropen # for help link
 from os import getcwd as getfolder
 from os import makedirs
 from os.path import exists as fileexists
 from os.path import isdir as isdir
+import pygetwindow as gw # to get window position and size for recreation
 
 
 # UI 
@@ -44,7 +44,6 @@ class Statusemitter(qtc.QObject):
 
     def sendmessage(self, mymessage)    :
         self.messagesignal.emit(mymessage)
-
 
 ##############################################################################################################################################
 #                                                          MAIN WINDOW
@@ -79,17 +78,13 @@ class camwin(QMainWindow):
         self.ui.label_36.setOpenExternalLinks(True) # this allows the click the link in the infobox ... label36
         self.ui.pushButton_comconnect.setDisabled(True) # dont push the button before cameras are scanned .. will be enabled by camscanner
         self.ui.pushButton_comrefresh.setDisabled(True) # dont push the button before cameras are scanned .. will be enabled by camscanner
-        
         # to give the SW an Icon (e.g. TaskManager ...) use in pyintaller ....  "pyinstaller --onefile --noconsole --icon=confs/SWicon.png ScopeControl.py"
-        
-
         self.ui.stackedWidget_scopetype.setVisible(False)
         self.ui.frame_4.setGeometry(self.ui.frame_3.x(), self.frame4pos[0], self.ui.frame_3.width(), self.ui.frame_3.height())
 
         # prepare statusmessage signal - connection 
         self.messageemitter = Statusemitter()           # create an Object for signal emission containing the signal send function
         self.messageemitter.messagesignal.connect(self.statusmessage) # this will be the target function of our signal
-
         self.move(self.parentwin.intwinpos[0], self.parentwin.intwinpos[1]) # move the window to its position
         self.parentwin.intwinpos[1] += 286  #   store in parent window the position for the next interface window
         self.show()
@@ -126,6 +121,9 @@ class camwin(QMainWindow):
         self.vidtime0 = 0 # this is the time when we will start recording
         self.vidtime1 = 0 # this is the time when the last frme was written
         self.TLperiode = float(1.0) # seconds we write until we write a new frame to video file
+        self.screenpos = [0, 0] # here we place the live view window (for the first time)
+        self.screenwin = self.resolution # will be overwritten with the real cam resolution and also overwritten if we resize the non fullscreen window ... for recreation
+        
 
         # image processing params
         self.lightness = self.saturation = 1 # value for lightness and saturation
@@ -247,9 +245,23 @@ class camwin(QMainWindow):
 
     ###################################### general functions ##################################################
     def fullscreentoggle(self):
+        self.keepwindowpos()
+        self.videomin = True
         self.fullscreenmode = not(self.fullscreenmode) # we toggle the current fullscreenmode
+        time.sleep(0.05)
+        self.videomin = False
         self.recreatewin = True # and recreate the window
+    
+    def minimize(self):
+        self.keepwindowpos() # stores the live view window properties (position and size)
+        self.showMinimized() # minimize control panel
+        self.videomin = True # minimize video window
 
+    def keepwindowpos(self):
+        if cv2.getWindowProperty("live-view", cv2.WND_PROP_VISIBLE) != 0 and not(self.fullscreenmode): # if there is a live screen, then we keep its last position
+            x, y, width, height = cv2.getWindowImageRect('live-view')
+            self.screenwin = [width, height]
+            self.screenpos = [x-8, y-31] # here we place the live view window after recreation
 
     def writesettings(self):
         configarray = [self.ui.comboBox_camport.currentIndex(), self.ui.comboBox_lampport.currentIndex(), self.ui.comboBox_micobject.currentIndex(), self.ui.lineEdit_pxlen.text(), self.ui.lineEdit_frameavnum.text(), self.ui.comboBox_mountport.currentIndex(), self.ui.comboBox_telescopes.currentIndex()]  # create list with all information to save
@@ -316,9 +328,7 @@ class camwin(QMainWindow):
         #UI
         self.close()                # close UI
 
-    def minimize(self):
-        self.showMinimized() # minimize control panel
-        self.videomin = True # minimize video window
+
 
 
     def changeEvent(self, event):    # changeevent for window is overwritten (is called whenever the Windowstate has changed)
@@ -606,6 +616,7 @@ class camwin(QMainWindow):
                 #  since we can only wish a resultion but that depends on the hardware lets see what we got and store it
                 self.resolution[1] = int(self.mycam.get(cv2.CAP_PROP_FRAME_HEIGHT))
                 self.resolution[0] = int(self.mycam.get(cv2.CAP_PROP_FRAME_WIDTH))
+                self.screenwin = self.resolution # after a new camera connection we always start with a live with with full size
 
                 # now we set the camera parameter for the first time
                 self.runcam = True  # we set the flag! and afterwards we update the set cam parameter
@@ -653,9 +664,8 @@ class camwin(QMainWindow):
             if self.recreatewin == True:    # we have to define our window since the camera starts for the first time or we come back from minimized window
                 # we prepare the window for full frame image ... to adjust
                 cv2.namedWindow('live-view', cv2.WINDOW_NORMAL)
-                cv2.moveWindow('live-view', self.resolution[0] - 1, self.resolution[1] - 1)
-                cv2.resizeWindow('live-view', self.resolution[0], self.resolution[1])
-                cv2.moveWindow('live-view', 0, 0)
+                cv2.resizeWindow('live-view', self.screenwin[0], self.screenwin[1])
+                cv2.moveWindow('live-view', self.screenpos[0], self.screenpos[1])
                 if self.fullscreenmode == True:   # if we have fullscreenmode activated, we will have the whole screen as live-view
                     cv2.setWindowProperty('live-view', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
@@ -1211,7 +1221,7 @@ class Fakeparentwin():
 ##  start gui
 if __name__ == "__main__":
     app = QApplication(sys.argv)              # define Qapplication Object
-    fakeparentwin = Fakeparentwin()           # that everything is fine for printedLAB Labcontrol  
-    experimentUI = camwin(0,fakeparentwin)       # define User interface
-    app.exec()                                      # execute
-    sys.exit(print("code finished"))                # exit code
+    fakeparentwin = Fakeparentwin()           # that everything is fine and prepared for printedLAB Labcontrol (interface)
+    experimentUI = camwin(0,fakeparentwin)    # define User interface
+    app.exec()                                # execute
+    sys.exit(print("code finished"))          # exit code
