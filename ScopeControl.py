@@ -78,9 +78,10 @@ class camwin(QMainWindow):
         self.ui.label_36.setOpenExternalLinks(True) # this allows the click the link in the infobox ... label36
         self.ui.pushButton_comconnect.setDisabled(True) # dont push the button before cameras are scanned .. will be enabled by camscanner
         self.ui.pushButton_comrefresh.setDisabled(True) # dont push the button before cameras are scanned .. will be enabled by camscanner
-        # to give the SW an Icon (e.g. TaskManager ...) use in pyintaller ....  "pyinstaller --onefile --noconsole --icon=confs/SWicon.png ScopeControl.py"
         self.ui.stackedWidget_scopetype.setVisible(False)
         self.ui.frame_4.setGeometry(self.ui.frame_3.x(), self.frame4pos[0], self.ui.frame_3.width(), self.ui.frame_3.height())
+
+        # to give the SW an Icon (e.g. TaskManager ...) use in pyintaller ....  "pyinstaller --onefile --noconsole --icon=confs/SWicon.png ScopeControl.py"
 
         # prepare statusmessage signal - connection 
         self.messageemitter = Statusemitter()           # create an Object for signal emission containing the signal send function
