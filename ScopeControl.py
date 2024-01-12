@@ -2,8 +2,7 @@
 # ScopeControl
 # by Thorsten Schumacher - PrintedLabs
 #
-# Licence: Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA) 
-# also see: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
+# Licence: GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 #
 # A slim uvc camera viewer with basic camera control functions, some live view filter functions and tools for microscopic and astronomical measurements, 
 # image averaging and a simple timelapse tool. It also includes the software interface to our 3D-printed microscope, telescope and telescope mount.

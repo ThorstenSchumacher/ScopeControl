@@ -1799,6 +1799,9 @@ QPushButton:pressed {
     </property>
     <widget class="QWidget" name="page_3">
      <widget class="QLineEdit" name="lineEdit_imgformat">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>180</x>
@@ -1816,7 +1819,7 @@ color:rgb(220,220,220);
 font: 10pt &quot;MS Shell Dlg 2&quot;;</string>
       </property>
       <property name="text">
-       <string>bmp</string>
+       <string>png</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_25">
