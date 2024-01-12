@@ -1,7 +1,6 @@
 # ScopeControl
 by Thorsten Schumacher  - PrintedLabs
-
-License: Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)
+https://printedlabs.uni-bayreuth.de/
 
 A slim uvc-camera viewer including basic camera control functions, 
 some live-view filter functions and tools for microscopic and astronomic 
